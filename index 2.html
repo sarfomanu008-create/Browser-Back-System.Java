@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Data Structure Project</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #17365d;
+            color: white;
+            text-align: center;
+            padding: 30px 15px;
+        }
+
+        main {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        section {
+            background: white;
+            padding: 22px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #17365d;
+        }
+
+        .box {
+            background: #e0ecff;
+            padding: 15px;
+            border-left: 5px solid #2563eb;
+        }
+
+        input {
+            padding: 10px;
+            width: 55%;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .stack-item {
+            background: #dbeafe;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        footer {
+            background: #17365d;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Stack Data Structure</h1>
+    <p>Real-World Application: Web Browser Back Button System</p>
+</header>
+
+<main>
+
+    <section>
+        <h2>1. Introduction</h2>
+        <p>
+            A stack is a linear data structure that follows the
+            Last In, First Out (LIFO) principle. The last item added
+            is the first item removed.
+        </p>
+
+        <div class="box">
+            <strong>Push:</strong> Add an item to the stack.<br>
+            <strong>Pop:</strong> Remove the top item.<br>
+            <strong>Peek:</strong> View the top item without removing it.
+        </div>
+    </section>
+
+    <section>
+        <h2>2. Real-World Applications of Stacks</h2>
+        <ul>
+            <li>Web browser navigation.</li>
+            <li>Undo and redo operations.</li>
+            <li>Function calls and recursion.</li>
+            <li>Mathematical expression evaluation.</li>
+            <li>Checking balanced parentheses.</li>
+            <li>Reversing strings and other data.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>3. Why Are Stacks Necessary?</h2>
+        <p>
+            Stacks are useful when the most recently added item must
+            be processed first. Push and pop operations generally take
+            O(1) time with a suitable implementation.
+        </p>
+        <p>
+            In browser navigation, a stack stores previous pages so
+            that the user can return to them in reverse order.
+        </p>
+    </section>
+
+    <section>
+        <h2>4. Interactive Browser Back System</h2>
+
+        <p>Enter a page name and click Visit. Use Back to return.</p>
+
+        <input
+            type="text"
+            id="pageInput"
+            placeholder="Enter a page name"
+        >
+
+        <button onclick="visitPage()">Visit</button>
+        <button id="backButton" onclick="goBack()" disabled>Back</button>
+        <button onclick="resetSystem()">Reset</button>
+
+        <h3>Current Page</h3>
+        <p id="currentPage">Home Page</p>
+        <p id="message">Welcome! Visit a page to begin.</p>
+
+        <h3>Browsing History Stack (Top to Bottom)</h3>
+        <div id="stackDisplay">No previous pages stored.</div>
+
+        <p>Stack size: <strong id="stackSize">0</strong></p>
+    </section>
+
+    <section>
+        <h2>5. How the Application Works</h2>
+        <ol>
+            <li>The application starts at the Home Page.</li>
+            <li>Visiting a new page pushes the current page onto the stack.</li>
+            <li>The new page becomes the current page.</li>
+            <li>Pressing Back pops the most recent page from the stack.</li>
+            <li>The popped page becomes the current page.</li>
+        </ol>
+
+        <div class="box">
+            <strong>Example:</strong><br>
+            Visit Google → YouTube → Wikipedia.<br>
+            Press Back → YouTube.<br>
+            Press Back again → Google.
+        </div>
+    </section>
+
+    <section>
+        <h2>6. Conclusion</h2>
+        <p>
+            Stacks are important because they process the most recently
+            added item first. The Browser Back Button System demonstrates
+            how push and pop operations can manage browsing history.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>Stack Data Structure Project</p>
+</footer>
+
+<script>
+    const historyStack = [];
+    let currentPage = "Home Page";
+
+    function render(message) {
+        document.getElementById("currentPage").textContent = currentPage;
+        document.getElementById("message").textContent = message;
+        document.getElementById("stackSize").textContent = historyStack.length;
+
+        document.getElementById("backButton").disabled =
+            historyStack.length === 0;
+
+        const display = document.getElementById("stackDisplay");
+        display.replaceChildren();
+
+        if (historyStack.length === 0) {
+            display.textContent = "No previous pages stored.";
+            return;
+        }
+
+        for (let i = historyStack.length - 1; i >= 0; i--) {
+            const item = document.createElement("div");
+            item.className = "stack-item";
+            item.textContent =
+                (i === historyStack.length - 1 ? "TOP → " : "") +
+                historyStack[i];
+
+            display.appendChild(item);
+        }
+    }
+
+    function visitPage() {
+        const input = document.getElementById("pageInput");
+        const page = input.value.trim();
+
+        if (page === "") {
+            render("Please enter a page name.");
+            return;
+        }
+
+        historyStack.push(currentPage);
+        currentPage = page;
+        input.value = "";
+
+        render("Visited " + currentPage + ".");
+    }
+
+    function goBack() {
+        if (historyStack.length === 0) {
+            render("No previous page is available.");
+            return;
+        }
+
+        currentPage = historyStack.pop();
+        render("Returned to " + currentPage + ".");
+    }
+
+    function resetSystem() {
+        historyStack.length = 0;
+        currentPage = "Home Page";
+        document.getElementById("pageInput").value = "";
+
+        render("System reset. Welcome!");
+    }
+
+    document.getElementById("pageInput").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            visitPage();
+        }
+    });
+
+    render("Welcome! Visit a page to begin.");
+</script>
+
+</body>
+</html>
